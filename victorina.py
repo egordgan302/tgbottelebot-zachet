@@ -15,7 +15,7 @@ def handle_text(message):
         ask_questions(message.chat.id)
 
 def ask_questions(chat_id):
-    with open("questions.txt", "r") as file:
+    with open("questions.txt", encoding="utf-8") as file:
         questions = file.readlines()
     for question in questions:
         bot.send_message(chat_id, question.strip())
