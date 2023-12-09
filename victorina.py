@@ -1,25 +1,47 @@
 import telebot
 from telebot import types
 
+# Создаем бота
 bot = telebot.TeleBot("TOKEN")
+try:
+    with open('questions.txt', 'r') as file:
+        questions = file.readlines()
+except FileNotFoundError:
+    print("Файл questions.txt не найден")
+    exit()
 
+# Инициализируем переменную для подсчета правильных ответов
+score = 0
+
+# Функция для отправки вопроса и кнопок
+def send_question(message):
+    global score
+    if questions:
+        question = questions.pop(0).strip()
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+        options = ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4"]
+        for option in options:
+            markup.add(types.KeyboardButton(option))
+        bot.send_message(message.chat.id, question, reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, f"Викторина завершена. Ваш счет: {score}")
+        score = 0
+
+# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add(types.KeyboardButton("ВИКТОРИНА"))
-    bot.send_message(message.chat.id, "Привет, давай поиграем в викторину?", reply_markup=markup)
+    send_question(message)
 
-@bot.message_handler(content_types=['text'])
-def handle_text(message):
-    if message.text.lower() == "да":
-        ask_questions(message.chat.id)
+# Обработчик ответов пользователя
+@bot.message_handler(func=lambda message: True)
+def handle_answer(message):
+    global score
+    # Проверяем правильность ответа и увеличиваем счет, если ответ правильный
+    if message.text == "Правильный вариант":
+        score += 1
+    send_question(message)
 
-def ask_questions(chat_id):
-    with open("questions.txt", encoding="utf-8") as file:
-        questions = file.readlines()
-    for question in questions:
-        bot.send_message(chat_id, question.strip())
-
+# Запускаем бота
 bot.polling()
 
 
