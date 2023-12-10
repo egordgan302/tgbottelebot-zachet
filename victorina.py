@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 
 
-bot = telebot.TeleBot("6575506276:AAERV4hw8lignyyBbFshkkdUK3vAEddtIHo")
+bot = telebot.TeleBot("6575506276:AAERV4hw8lignyyBbFshkkdUK3vAIHo")
 try:
     with open('questions.txt', 'r') as file:
         questions = file.readlines()
