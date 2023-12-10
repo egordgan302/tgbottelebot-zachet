@@ -35,7 +35,6 @@ def start(message):
 @bot.message_handler(func=lambda message: True)
 def handle_answer(message):
     global score
-    # Проверяем правильность ответа и увеличиваем счет, если ответ правильный
     if message.text == "Correct option":
         score += 1
     send_question(message)
